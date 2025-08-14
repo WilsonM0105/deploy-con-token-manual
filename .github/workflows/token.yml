@@ -1,0 +1,34 @@
+name: Flujo_trabajo # nombre del flujo de trabajo
+
+on:
+  push:
+    branches:
+      - main
+# El flujo se ejecuta con cada push a main.
+
+jobs:
+  example-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout del código
+      - name: Checkout code
+        uses: actions/checkout@v3
+      # Clona el repositorio en el runner.
+
+      # Verificar que el PAT funciona (llamada a la API con tu token manual)
+      - name: Use Personal Access Token (PAT)
+        run: |
+          curl -H "Authorization: Bearer ${{ secrets.MY_PERSONAL_TOKEN }}" \
+               -H "Accept: application/vnd.github.v3+json" \
+               https://api.github.com/user
+
+      # Publicar el sitio en GitHub Pages usando el PAT (no el GITHUB_TOKEN)
+      - name: Deploy to GitHub Pages using PAT
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.MY_PERSONAL_TOKEN }}
+          publish_dir: ./         # Publica lo que haya en la raíz (tu index.html)
+          publish_branch: gh-pages
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
